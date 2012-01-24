@@ -1022,6 +1022,22 @@ public abstract class AutomatonSpecification implements Cloneable  {
         }
         return epsilonClosure;
     }
+    
+    /**
+     * Tworzy automat akceptujący język opisany według prostego schematu.
+     */
+    public AutomatonSpecification makeAutomatonFromScheme(String scheme) {
+        State state = addState();
+        markAsInitial(state);
+        markAsFinal(state);
+        for (int i = 0; i < scheme.length(); i++) {
+            if (scheme.charAt(i) >= 'm' && scheme.charAt(i) <= 'z')
+                addLoop(state, new CharTransitionLabel(scheme.charAt(i-1)));
+            else
+                addLoop(state, new CharTransitionLabel(scheme.charAt(i)));
+        }
+        return this;
+    }
 
     private LinkedList<State> finalStatess = new LinkedList<State>();
 };
