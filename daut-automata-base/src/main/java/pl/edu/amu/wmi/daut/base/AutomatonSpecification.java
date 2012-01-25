@@ -1022,20 +1022,29 @@ public abstract class AutomatonSpecification implements Cloneable  {
         }
         return epsilonClosure;
     }
-    
+
     /**
      * Tworzy automat akceptujący język opisany według prostego schematu.
      */
     public AutomatonSpecification makeAutomatonFromScheme(String scheme) {
-        State state = addState();
-        markAsInitial(state);
-        markAsFinal(state);
+        State s0 = addState();
+        State s1 = addState();
+        State s2 = addState();
+        markAsInitial(s0);
+        markAsFinal(s1);
+        markAsFinal(s2);
         for (int i = 0; i < scheme.length(); i++) {
-            if (scheme.charAt(i) >= 'm' && scheme.charAt(i) <= 'z')
-                addLoop(state, new CharTransitionLabel(scheme.charAt(i-1)));
-            else
-                addLoop(state, new CharTransitionLabel(scheme.charAt(i)));
+            if (scheme.charAt(i) >= 'a' && scheme.charAt(i) < 'm') {
+                if (scheme.charAt(i + 1) >= 'm' && scheme.charAt(i + 1) < 'z')
+                    addTransition(s1, s2, new CharTransitionLabel(scheme.charAt(i)));
+                if (scheme.charAt(i + 1) >= 'a' && scheme.charAt(i + 1) < 'm')
+                    addTransition(s0, s1, new CharTransitionLabel(scheme.charAt(i)));
+            }
+            if (scheme.charAt(i) >= 'm' && scheme.charAt(i) <= 'z') {
+                addLoop(s2, new CharTransitionLabel(scheme.charAt(i - 1)));
+            }
         }
+
         return this;
     }
 
